@@ -2,26 +2,33 @@ package pubmed
 
 import (
 	"bufio"
+	"colly-spider/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
 	"log"
 	"os"
-	"strings"
 	"time"
 )
 
+type abstractContent struct {
+	Content string `json:"content"`
+	Strong  string `json:"strong"`
+}
+
 type Article struct {
-	headTitle string
-	title string
-	affiliations []string
+	Title     string            `json:"title"`
+	Authors   [] string         `json:"authors"`
+	Abstracts []abstractContent `json:"abstracts"`
 }
 
 /**
  * 处理详情页
  */
-func SpiderArticle(collector *colly.Collector, url string) {
+func SpiderArticle(collector *colly.Collector, href string) {
+	url := DOMAIN + href
+
 	collector = collector.Clone()
 
 	collector.Limit(&colly.LimitRule{
@@ -34,57 +41,77 @@ func SpiderArticle(collector *colly.Collector, url string) {
 	})
 
 	collector.OnResponse(func(response *colly.Response) {
-		html := string(response.Body)
+		//html := string(response.Body)
 
-		dom,err:=goquery.NewDocumentFromReader(strings.NewReader(html))
+		//dom,err:=goquery.NewDocumentFromReader(strings.NewReader(html))
+		//
+		//if err!=nil{
+		//	log.Fatalln(err)
+		//}
+		//
+		//title:=dom.Find("title").Text()
+		//filePath := "./pubmed/articles/" + title + ".html"
+		//
+		//fmt.Printf("文件将保存到：%s",filePath)
 
-		if err!=nil{
-			log.Fatalln(err)
-		}
-
-		title:=dom.Find("title").Text()
-		filePath := "./pubmed/articles/" + title + ".html"
-
-		fmt.Println(title)
-		fmt.Println(filePath)
-		fmt.Println(html)
-
-
-		writeToHtmlFile(filePath,html)
+		//writeToFile(filePath,html)
 	})
 
 	// 解析详情页数据
 	collector.OnHTML(".article-details", func(e *colly.HTMLElement) {
-      headTitle := e.ChildText("h1.heading-title")
-      title := e.ChildText(".expanded-authors > .affiliations > .title")
-		fmt.Println(headTitle,title)
-      var affiliations []string
+		var authors []string
+		var abstracts []abstractContent
 
-     e.DOM.Find(".expanded-authors > .affiliations > .item-list li").Each(func(i int, item *goquery.Selection) {
-		 affiliations =  append(affiliations, 	item.Text())
-	  })
+		title := e.ChildText("h1.heading-title")
 
-      article := Article{
-		 headTitle:headTitle,
-		 title:title,
-		 affiliations: affiliations,
-	  }
+		e.DOM.Find(".authors-list .authors-list-item ").Each(func(i int, item *goquery.Selection) {
+			name := item.Find(".full-name").Text()
+			authors =  append(authors, name)
+		})
 
-		jsonData, err := json.Marshal(article)
+		e.DOM.Find(".abstract-content p").Each(func(i int, item *goquery.Selection) {
 
-		if err != nil {
+			strong := item.Find("strong.sub-title").Text()
+			strong = utils.CleanSpaceLine(strong)
+			text := item.Text()
+			text =utils.DeleteExtraSpace(text)
+			text = utils.CleanLine(text)
+
+			abstracts = append(abstracts, abstractContent{
+				Content: text,
+				Strong: strong,
+			})
+		})
+
+		article := &Article{
+			Title:     utils.DeleteExtraSpace(title),
+			Authors:   authors,
+			Abstracts: abstracts,
+		}
+
+		data, err := json.Marshal(article)
+		if err !=nil {
 			fmt.Println(err.Error())
 		}
-		fmt.Println(string(jsonData))
+		fmt.Println(string(data))
+
+		dir := href[0 : len(href)-1]
+
+		filePath := "./pubmed/articles" + dir + ".json"
+
+		fmt.Printf("now file path is:%s",filePath)
+		//writeToFile(filePath,[]byte(data))
+		utils.WriteFileWithBytes(filePath,data)
+
 
 	})
 
 	collector.Visit(url)
 }
 
-func writeToHtmlFile(filePath string, str string )  {
+func writeToFile(filePath string, content string) {
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0666)
 
-	file, err := os.OpenFile(filePath, os.O_WRONLY | os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Printf("open file err=%v\n", err)
 		return
@@ -93,6 +120,36 @@ func writeToHtmlFile(filePath string, str string )  {
 	defer file.Close()
 	//写入时，使用带缓存的 *Writer
 	writer := bufio.NewWriter(file)
-	writer.WriteString(str)
+	writer.WriteString(content)
 
+}
+
+
+func testWrite(filePath string,data []byte) {
+
+	fp, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE,  0644)
+
+	defer func(){fp.Close()}()
+
+	if err!=nil && os.IsExist(err){
+		fp, _  = os.Create(filePath)
+
+	}
+
+	_, err = fp.Write(data)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func isExist(path string) bool {
+	_, err := os.Stat(path)    //os.Stat获取文件信息
+	if err != nil {
+		if os.IsExist(err) {
+			return true
+		}
+		return false
+	}
+	return true
 }

@@ -40,9 +40,9 @@ func SpiderPubmed(){
 			href, found := selection.Find("a.docsum-title").Attr("href")
 			print("href,found",href,found)
 			// 如果找到了详情页，则继续下一步的处理
-			url := DOMAIN + href
+
 			if found {
-				SpiderArticle(c, url)
+				SpiderArticle(c, href)
 				log.Println(href)
 			}
 		})
