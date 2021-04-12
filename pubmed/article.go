@@ -101,7 +101,7 @@ func SpiderArticle(collector *colly.Collector, href string) {
 
 		fmt.Printf("now file path is:%s",filePath)
 		//writeToFile(filePath,[]byte(data))
-		utils.WriteFileWithBytes(filePath,data)
+		//utils.WriteFileWithBytes(filePath,data)
 
 
 	})

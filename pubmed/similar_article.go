@@ -34,10 +34,6 @@ func SpiderSimilarArticle(collector *colly.Collector, url string){
 		})
 
 
-
-
-
-
 	})
 
 	collector.Visit(url)
