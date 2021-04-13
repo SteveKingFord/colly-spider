@@ -1,6 +1,9 @@
 package main
 
 import (
+	"colly-spider/global"
+	"colly-spider/initiallize"
+	"colly-spider/model/common"
 	"colly-spider/pubmed"
 	"colly-spider/utils"
 	"fmt"
@@ -17,16 +20,18 @@ type Book struct {
 }
 
 func main()  {
-	//book := &Book{Id: 1, Title: "Go Web 编程", Summary: "Go Web 编程入门指南", Author: "学院君"}
-	//
-	//data, _ := json.Marshal(book)
-	//testWrite(data)
+
 	//print(string(data))
-
-
-	pubmed.SpiderPubmed()
+	global.DB = initiallize.InitialGORM()
+    if global.DB  != nil {
+		common.InitMigrate(global.DB)
+		pubmed.SpiderPubmed()
+	}
 
 }
+
+
+
 
 func testWrite(data []byte) {
 	fp, err := os.OpenFile("data.json", os.O_RDWR|os.O_CREATE, 0755)

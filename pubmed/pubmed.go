@@ -9,12 +9,12 @@ import (
 	"log"
 )
 
-const(
+const (
 	DOMAIN   = "https://pubmed.ncbi.nlm.nih.gov"
 	StartUrl = DOMAIN + "/?term=intima-media+thickness%E3%80%81Atherosclerotic+Cardiovascular+Disease"
 )
 
-var page int =1
+var page int = 1
 
 type Data struct {
 	Term                string `json:"term" form:"term"`
@@ -22,7 +22,6 @@ type Data struct {
 	NoCache             string `json:"no-cache" form:"no-cache"`
 	Csrfmiddlewaretoken string `json:"csrfmiddlewaretoken" form:"csrfmiddlewaretoken"`
 }
-
 
 func SpiderPubmed() {
 	// Instantiate default collector
@@ -47,7 +46,6 @@ func SpiderPubmed() {
 		//	//url := DOMAIN + href
 		//})
 
-
 		e.DOM.Find(".docsum-content").Each(func(i int, selection *goquery.Selection) {
 			href, found := selection.Find("a.docsum-title").Attr("href")
 			print("href,found", href, found)
@@ -61,7 +59,6 @@ func SpiderPubmed() {
 		})
 	})
 
-
 	// Before making a request print "Visiting ..."
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("c 请求地址", r.URL.String())
@@ -74,14 +71,15 @@ func SpiderPubmed() {
 	})
 
 	c.OnScraped(func(r *colly.Response) {
-		page = page +1
-		nextPage := fmt.Sprintf("%s&page=%d", StartUrl, page)
-		fmt.Println("next page is",nextPage)
-		c.Visit(nextPage)
+		page = page + 1
+		if page*10 <= 12186 {
+			nextPage := fmt.Sprintf("%s&page=%d", StartUrl, page)
+			fmt.Println("next page is", nextPage)
+			c.Visit(nextPage)
+		}
+
 		fmt.Println("Finished", r.Request.URL)
 	})
-
-
 
 	// Set error handler
 	c.OnError(func(r *colly.Response, err error) {

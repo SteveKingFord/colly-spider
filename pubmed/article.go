@@ -2,8 +2,10 @@ package pubmed
 
 import (
 	"bufio"
+	"colly-spider/global"
+	"colly-spider/model"
+	"colly-spider/repository"
 	"colly-spider/utils"
-	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
@@ -19,7 +21,7 @@ type abstractContent struct {
 
 type Article struct {
 	Title     string            `json:"title"`
-	Authors   [] string         `json:"authors"`
+	Authors   []string          `json:"authors"`
 	Abstracts []abstractContent `json:"abstracts"`
 }
 
@@ -59,14 +61,14 @@ func SpiderArticle(collector *colly.Collector, href string) {
 
 	// 解析详情页数据
 	collector.OnHTML(".article-details", func(e *colly.HTMLElement) {
-		var authors []string
-		var abstracts []abstractContent
+		var authors []model.Author
+		var abstracts []model.Content
 
 		title := e.ChildText("h1.heading-title")
 
 		e.DOM.Find(".authors-list .authors-list-item ").Each(func(i int, item *goquery.Selection) {
 			name := item.Find(".full-name").Text()
-			authors =  append(authors, name)
+			authors = append(authors, model.Author{Name: name})
 		})
 
 		e.DOM.Find(".abstract-content p").Each(func(i int, item *goquery.Selection) {
@@ -74,35 +76,49 @@ func SpiderArticle(collector *colly.Collector, href string) {
 			strong := item.Find("strong.sub-title").Text()
 			strong = utils.CleanSpaceLine(strong)
 			text := item.Text()
-			text =utils.DeleteExtraSpace(text)
+			text = utils.DeleteExtraSpace(text)
 			text = utils.CleanLine(text)
 
-			abstracts = append(abstracts, abstractContent{
+			abstracts = append(abstracts, model.Content{
 				Content: text,
-				Strong: strong,
+				Strong:  strong,
 			})
 		})
 
-		article := &Article{
-			Title:     utils.DeleteExtraSpace(title),
+		article := &model.Article{
+			Type:      "pubmed",
+			Href:      href,
+			Title:     title,
 			Authors:   authors,
 			Abstracts: abstracts,
 		}
 
-		data, err := json.Marshal(article)
-		if err !=nil {
-			fmt.Println(err.Error())
+		r := repository.ArticleRespository{DB: global.DB}
+		err := r.Create(article)
+		if err != nil {
+			fmt.Println("create article failed!")
 		}
-		fmt.Println(string(data))
 
-		dir := href[0 : len(href)-1]
-
-		filePath := "./pubmed/articles" + dir + ".json"
-
-		fmt.Printf("now file path is:%s",filePath)
+		//article := &Article{
+		//	Title:     utils.DeleteExtraSpace(title),
+		//	Authors:   authors,
+		//	Abstracts: abstracts,
+		//}
+		//
+		//data, err := json.Marshal(article)
+		//if err != nil {
+		//	fmt.Println(err.Error())
+		//}
+		//
+		//fmt.Println(string(data))
+		//
+		//dir := href[0 : len(href)-1]
+		//
+		//filePath := "./pubmed/articles" + dir + ".json"
+		//
+		//fmt.Printf("now file path is:%s", filePath)
 		//writeToFile(filePath,[]byte(data))
 		//utils.WriteFileWithBytes(filePath,data)
-
 
 	})
 
@@ -124,15 +140,14 @@ func writeToFile(filePath string, content string) {
 
 }
 
+func testWrite(filePath string, data []byte) {
 
-func testWrite(filePath string,data []byte) {
+	fp, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0644)
 
-	fp, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE,  0644)
+	defer func() { fp.Close() }()
 
-	defer func(){fp.Close()}()
-
-	if err!=nil && os.IsExist(err){
-		fp, _  = os.Create(filePath)
+	if err != nil && os.IsExist(err) {
+		fp, _ = os.Create(filePath)
 
 	}
 
@@ -144,7 +159,7 @@ func testWrite(filePath string,data []byte) {
 }
 
 func isExist(path string) bool {
-	_, err := os.Stat(path)    //os.Stat获取文件信息
+	_, err := os.Stat(path) //os.Stat获取文件信息
 	if err != nil {
 		if os.IsExist(err) {
 			return true
