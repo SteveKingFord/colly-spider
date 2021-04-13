@@ -4,7 +4,6 @@ import (
 	"colly-spider/global"
 	"colly-spider/initiallize"
 	"colly-spider/model/common"
-	"colly-spider/pubmed"
 	"colly-spider/utils"
 	"fmt"
 	"log"
@@ -25,7 +24,8 @@ func main()  {
 	global.DB = initiallize.InitialGORM()
     if global.DB  != nil {
 		common.InitMigrate(global.DB)
-		pubmed.SpiderPubmed()
+		//pubmed.SpiderPubmed()
+		initiallize.RegisterRouter()
 	}
 
 }
