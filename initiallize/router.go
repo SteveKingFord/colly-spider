@@ -9,7 +9,7 @@ import (
 func RegisterRouter()  {
 	r := gin.Default()
 
-	r.Use(middleware.Cors())
+	r.Use(middleware.Cors2())
 
 	v1 := r.Group("/api")
 
