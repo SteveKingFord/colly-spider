@@ -11,7 +11,7 @@ import (
 
 const (
 	DOMAIN   = "https://pubmed.ncbi.nlm.nih.gov"
-	StartUrl = DOMAIN + "/?term=intima-media+thickness%E3%80%81Atherosclerotic+Cardiovascular+Disease"
+	StartUrl = DOMAIN + "/?term=Fatty+liver+with+chronic+hepatitis+B"
 )
 
 var page int = 1
