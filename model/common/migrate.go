@@ -7,8 +7,8 @@ import (
 
 func InitMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(
-		&model.Article{},
-		&model.Author{},
-		&model.Content{},
+		&model.FattyLiverArticle{},
+		&model.FattyLiverAuthor{},
+		&model.FattyLiverAbstract{},
 	)
 }

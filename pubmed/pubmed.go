@@ -1,7 +1,6 @@
 package pubmed
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
@@ -11,31 +10,28 @@ import (
 
 const (
 	DOMAIN   = "https://pubmed.ncbi.nlm.nih.gov"
-	StartUrl = DOMAIN + "/?term=Fatty+liver+with+chronic+hepatitis+B"
+	StartUrl = DOMAIN + "/?term=Fatty+liver+of+ultrasound"
 )
 
-var page int = 1
+var page = 180
 
-type Data struct {
-	Term                string `json:"term" form:"term"`
-	Page                int    `json:"page" form:"page"`
-	NoCache             string `json:"no-cache" form:"no-cache"`
-	Csrfmiddlewaretoken string `json:"csrfmiddlewaretoken" form:"csrfmiddlewaretoken"`
-}
 
 func SpiderPubmed() {
-	// Instantiate default collector
+
 	c := colly.NewCollector(
-		// Visit only domains: pubmed.ncbi.nlm.nih.gov
+		// 开启本机debug
+		// colly.Debugger(&debug.LogDebugger{}),
 		colly.AllowedDomains("pubmed.ncbi.nlm.nih.gov"),
-		colly.CacheDir("./pubmed/coursera_cache"),
+		// 防止页面重复下载
+		//colly.CacheDir("./pubmed/coursera_cache"),
+		//colly.Async(true),
 	)
 
 	extensions.RandomUserAgent(c)
 	extensions.Referer(c)
 
-	// On every a element which has href attribute call callback
-	c.OnHTML(".full-docsum", func(e *colly.HTMLElement) {
+
+	c.OnHTML(".search-results", func(e *colly.HTMLElement) {
 		//e.ForEach(".docsum-content", func(i int, item *colly.HTMLElement) {
 		//	href := item.ChildAttr("a[class='docsum-title']", "href")
 		//	title := item.ChildText("a[class='docsum-title']")
@@ -59,23 +55,28 @@ func SpiderPubmed() {
 		})
 	})
 
+
 	// Before making a request print "Visiting ..."
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("c 请求地址", r.URL.String())
+		fmt.Printf("c 请求地址:%s,---当前页：%d", r.URL.String(),page)
 		//r.Headers.Set("Content-Type", "application/json;charset=UTF-8")
 		r.Headers.Set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 	})
 
 	c.OnResponse(func(response *colly.Response) {
 		//html := string(response.Body)
+		//fmt.Println(html)
 	})
 
 	c.OnScraped(func(r *colly.Response) {
 		page = page + 1
-		if page*10 <= 12186 {
+		if page*10 <= 7031 {
 			nextPage := fmt.Sprintf("%s&page=%d", StartUrl, page)
 			fmt.Println("next page is", nextPage)
-			c.Visit(nextPage)
+			err := c.Visit(nextPage)
+			if err != nil {
+				return
+			}
 		}
 
 		fmt.Println("Finished", r.Request.URL)
@@ -87,20 +88,10 @@ func SpiderPubmed() {
 	})
 
 	// Start scraping on https://hackerspaces.org
-	c.Visit(StartUrl)
-}
-
-func nextPage(c *colly.Collector) {
-	nextUrl := "https://pubmed.ncbi.nlm.nih.gov/more/"
-
-	param := &Data{
-		Term:                "intima-media thickness、Atherosclerotic Cardiovascular Disease",
-		Page:                2,
-		NoCache:             "1618148661073",
-		Csrfmiddlewaretoken: "ShCyEgOye3MxKB8SCSTBb0EKnNs3sZQsrOQozXOr0PdZnmLVCX5h6BvTAOqKEcP9",
+	ps := fmt.Sprintf("%s&page=%d", StartUrl, page)
+	//err := c.Visit(StartUrl)
+	err := c.Visit(ps)
+	if err != nil {
+		return
 	}
-
-	formData, _ := json.Marshal(param)
-	c.PostRaw(nextUrl, formData)
-	c.Visit(nextUrl)
 }

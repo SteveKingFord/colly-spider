@@ -2,9 +2,9 @@ package model
 
 import "gorm.io/gorm"
 
-type Content struct {
+type FattyLiverAbstract struct {
 	gorm.Model
-	ArticleId uint   `json:"articleId"`
+	FattyLiverArticleId uint   `json:"fatty_liver_article_id"`
 	Content   string `json:"content"`
 	Strong    string `json:"strong"`
 }

@@ -14,15 +14,15 @@ type Query struct {
 	PageSize int `json:"pageSize" form:"pageSize"`
 }
 
-func (q *Query) GetList()([]model.Article, error){
-	r:=repository.ArticleRespository{
+func (q *Query) GetList()([]model.FattyLiverArticle, error){
+	r:=repository.FattyLiverArticleRepository{
 		DB: global.DB,
 	}
 	return r.GetList(q.PageIndex,q.PageSize)
 }
 
 func (q *Query) GetTotal()(*int64,error){
-	r:=repository.ArticleRespository{
+	r:=repository.FattyLiverArticleRepository{
 		DB: global.DB,
 	}
 	return r.Total()

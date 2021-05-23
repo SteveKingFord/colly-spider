@@ -1,7 +1,10 @@
 package main
 
 import (
-	"colly-spider/wanfangdata"
+	"colly-spider/global"
+	"colly-spider/initiallize"
+	"colly-spider/model/common"
+	"colly-spider/pubmed"
 	"log"
 	"os"
 )
@@ -15,14 +18,15 @@ type Book struct {
 }
 
 func main()  {
-
-	wanfangdata.StartSpider()
-	//global.DB = initiallize.InitialGORM()
-    //if global.DB  != nil {
-	//	common.InitMigrate(global.DB)
-	//	wanfangdata.StartSpider()
-	//	initiallize.RegisterRouter()
-	//}
+	global.DB = initiallize.InitialGORM()
+    if global.DB  != nil {
+		err := common.InitMigrate(global.DB)
+		if err != nil {
+			log.Fatal("database init err:",err)
+		}
+		pubmed.SpiderPubmed()
+		//initiallize.RegisterRouter()
+	}
 
 }
 
