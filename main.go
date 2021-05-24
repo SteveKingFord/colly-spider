@@ -4,9 +4,8 @@ import (
 	"colly-spider/global"
 	"colly-spider/initiallize"
 	"colly-spider/model/common"
-	"colly-spider/pubmed"
+	"colly-spider/spider/cnki"
 	"log"
-	"os"
 )
 
 
@@ -17,32 +16,16 @@ type Book struct {
 	Author string `json:"author"`
 }
 
-func main()  {
+func main() {
 	global.DB = initiallize.InitialGORM()
-    if global.DB  != nil {
+	if global.DB != nil {
 		err := common.InitMigrate(global.DB)
 		if err != nil {
-			log.Fatal("database init err:",err)
+			log.Fatal("database init err:", err)
 		}
-		pubmed.SpiderPubmed()
+		//pubmed.SpiderPubmed()
+		cnki.SpiderCnki()
 		//initiallize.RegisterRouter()
 	}
-
 }
-
-
-
-
-func testWrite(data []byte) {
-	fp, err := os.OpenFile("data.json", os.O_RDWR|os.O_CREATE, 0755)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer fp.Close()
-	_, err = fp.Write(data)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 

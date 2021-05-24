@@ -10,10 +10,10 @@ import (
 
 const (
 	DOMAIN   = "https://pubmed.ncbi.nlm.nih.gov"
-	StartUrl = DOMAIN + "/?term=Fatty+liver+of+ultrasound"
+	StartUrl = DOMAIN + "/?term=Ultrasound+in+fatty+liver+with+chronic+hepatitis+B&filter=datesearch.y_5"
 )
 
-var page = 180
+var page = 1
 
 
 func SpiderPubmed() {
@@ -58,7 +58,7 @@ func SpiderPubmed() {
 
 	// Before making a request print "Visiting ..."
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Printf("c 请求地址:%s,---当前页：%d", r.URL.String(),page)
+		fmt.Printf("c 请求地址:%s,---当前页：%d\n", r.URL.String(), page)
 		//r.Headers.Set("Content-Type", "application/json;charset=UTF-8")
 		r.Headers.Set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 	})
@@ -70,7 +70,7 @@ func SpiderPubmed() {
 
 	c.OnScraped(func(r *colly.Response) {
 		page = page + 1
-		if page*10 <= 7031 {
+		if page*10 <= 61 {
 			nextPage := fmt.Sprintf("%s&page=%d", StartUrl, page)
 			fmt.Println("next page is", nextPage)
 			err := c.Visit(nextPage)
@@ -88,9 +88,8 @@ func SpiderPubmed() {
 	})
 
 	// Start scraping on https://hackerspaces.org
-	ps := fmt.Sprintf("%s&page=%d", StartUrl, page)
-	//err := c.Visit(StartUrl)
-	err := c.Visit(ps)
+	//startPage := fmt.Sprintf("%s&page=%d", StartUrl, page)
+	err := c.Visit(StartUrl)
 	if err != nil {
 		return
 	}

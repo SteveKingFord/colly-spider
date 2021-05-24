@@ -1,10 +1,10 @@
-package model
+package Fibrosis
 
 import "gorm.io/gorm"
 
-type FattyLiverAbstract struct {
+type FibrosisAbstract struct {
 	gorm.Model
-	FattyLiverArticleId uint   `json:"fatty_liver_article_id"`
+	FibrosisArticleId uint   `json:"fibrosis_article_id"`
 	Content   string `json:"content"`
 	Strong    string `json:"strong"`
 }

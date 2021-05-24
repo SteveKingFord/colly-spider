@@ -14,9 +14,10 @@ func RegisterRouter()  {
 	v1 := r.Group("/api")
 
 	{
-		v1.GET("/article", api.GetList)
+		v1.GET("/pubmed/fatty-liver", api.GetFattyLiverList)
+		v1.GET("/pubmed/fibrosis", api.GetFibrosisList)
 	}
 
-	r.Run(":8080")
+	_ = r.Run(":8080")
 
 }

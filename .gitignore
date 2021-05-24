@@ -20,5 +20,5 @@
 *.DS_Store
 
 /pubmed/articles/*.json
-/pubmed/coursera_cache/*
+/spider/pubmed/coursera_cache/*
 main

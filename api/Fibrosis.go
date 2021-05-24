@@ -2,37 +2,35 @@ package api
 
 import (
 	"colly-spider/global"
-	"colly-spider/model"
+	"colly-spider/model/Fibrosis"
 	"colly-spider/repository"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 
-type Query struct {
+type FibrosisQuery struct {
 	PageIndex int `json:"pageIndex" form:"pageIndex"`
 	PageSize int `json:"pageSize" form:"pageSize"`
 }
 
-func (q *Query) GetList()([]model.FattyLiverArticle, error){
-	r:=repository.FattyLiverArticleRepository{
+func (q *FibrosisQuery) GetList()([]Fibrosis.FibrosisArticle, error){
+	r:=repository.FibrosisArticleRepository{
 		DB: global.DB,
 	}
 	return r.GetList(q.PageIndex,q.PageSize)
 }
 
-func (q *Query) GetTotal()(*int64,error){
-	r:=repository.FattyLiverArticleRepository{
+func (q *FibrosisQuery) GetTotal()(*int64,error){
+	r:=repository.FibrosisArticleRepository{
 		DB: global.DB,
 	}
 	return r.Total()
 }
 
 
-func GetList(c *gin.Context)  {
-	fmt.Println(c.Query("pageIndex"))
-	fmt.Println(c.Query("pageSize"))
-	 q := Query{}
+func GetFibrosisList(c *gin.Context)  {
+	q := FibrosisQuery{}
 	if err :=c.ShouldBind(&q);err ==nil {
 		value ,err := q.GetList()
 		total,_:=q.GetTotal()
