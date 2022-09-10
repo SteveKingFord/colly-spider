@@ -9,12 +9,17 @@ import (
 	"github.com/gocolly/colly/extensions"
 )
 
+// Chronic+hepatitis+B+with+nonalcoholic+fatty+liver+disease
+// Liver+fibrosis
+
 const (
 	DOMAIN   = "https://pubmed.ncbi.nlm.nih.gov"
 	StartUrl = DOMAIN + "/?term=Chronic+hepatitis+B+with+nonalcoholic+fatty+liver+disease"
 )
 
 var page = 1
+
+const maxPage = 45
 
 func SpiderPubmed() {
 
@@ -68,7 +73,7 @@ func SpiderPubmed() {
 
 	c.OnScraped(func(r *colly.Response) {
 		page = page + 1
-		if page*10 <= 61 {
+		if page*10 <= maxPage {
 			nextPage := fmt.Sprintf("%s&page=%d", StartUrl, page)
 			fmt.Println("next page is", nextPage)
 			err := c.Visit(nextPage)

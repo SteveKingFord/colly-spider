@@ -14,7 +14,8 @@ import (
 	"github.com/gocolly/colly"
 )
 
-// 慢性乙型肝炎合并非酒精性脂肪性肝病
+// Chronic: 慢性乙型肝炎合并非酒精性脂肪性肝病
+// LiverFibrosis: 肝纤维化
 const articleType = "Chronic"
 
 func SpiderArticle(collector *colly.Collector, href string) {

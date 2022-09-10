@@ -2,6 +2,7 @@ package repository
 
 import (
 	"colly-spider/model/pubmed"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -11,6 +12,14 @@ type PubmedArticleRepository struct {
 }
 
 func (r *PubmedArticleRepository) Create(article *pubmed.PubmedArticle) error {
+	result := r.DB.Where("href = ?", article.Href).First(article)
+
+	fmt.Println("result.article:", result.RowsAffected)
+
+	if result.RowsAffected != 0 {
+		return result.Error
+	}
+
 	return r.DB.Create(article).Error
 }
 
