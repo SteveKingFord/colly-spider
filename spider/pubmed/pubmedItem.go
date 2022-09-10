@@ -2,17 +2,20 @@ package pubmed
 
 import (
 	"colly-spider/global"
-	"colly-spider/model/FattyLiver"
+	Pubmed "colly-spider/model/pubmed"
 	"colly-spider/repository"
 	"colly-spider/utils"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/gocolly/colly"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/gocolly/colly"
 )
 
+// 慢性乙型肝炎合并非酒精性脂肪性肝病
+const articleType = "Chronic"
 
 func SpiderArticle(collector *colly.Collector, href string) {
 	url := DOMAIN + href
@@ -26,7 +29,7 @@ func SpiderArticle(collector *colly.Collector, href string) {
 	})
 
 	if err != nil {
-	log.Fatal("limit error:",err)
+		log.Fatal("limit error:", err)
 	}
 
 	collector.OnRequest(func(request *colly.Request) {
@@ -40,27 +43,26 @@ func SpiderArticle(collector *colly.Collector, href string) {
 	// 解析详情页数据
 	collector.OnHTML(".article-details", func(e *colly.HTMLElement) {
 		var (
-			authors []FattyLiver.FattyLiverAuthor
-			abstracts []FattyLiver.FattyLiverAbstract
+			authors   []Pubmed.PubmedAuthor
+			abstracts []Pubmed.PubmedAbstract
 		)
 
-		eubDate :=  e.ChildText(".full-view .secondary-date")
+		eubDate := e.ChildText(".full-view .secondary-date")
 
 		if eubDate == "" {
 			cit := e.ChildText(".full-view .cit")
-			cits := strings.Split(cit,";")
+			cits := strings.Split(cit, ";")
 			eubDate = cits[0]
 		}
 
-
 		title := e.ChildText(".full-view h1.heading-title")
 
-		e.DOM.Find(".full-view .authors .authors-list .authors-list-item").Each(func(i int, item *goquery.Selection){
+		e.DOM.Find(".full-view .authors .authors-list .authors-list-item").Each(func(i int, item *goquery.Selection) {
 			author := item.Find("a.full-name").Text()
-			authors = append(authors, FattyLiver.FattyLiverAuthor{Name: author})
+			authors = append(authors, Pubmed.PubmedAuthor{Name: author})
 		})
 
-		fmt.Println("authors:",authors)
+		fmt.Println("authors:", authors)
 
 		e.DOM.Find(".abstract-content p").Each(func(i int, item *goquery.Selection) {
 
@@ -70,23 +72,23 @@ func SpiderArticle(collector *colly.Collector, href string) {
 			text = utils.DeleteExtraSpace(text)
 			text = utils.CleanLine(text)
 
-			abstracts = append(abstracts, FattyLiver.FattyLiverAbstract{
+			abstracts = append(abstracts, Pubmed.PubmedAbstract{
 				Content: text,
 				Strong:  strong,
 			})
 		})
 
-		article := &FattyLiver.FattyLiverArticle{
-			Type:      "超声-肝合并慢乙肝",
-			Href:      href,
-			Title:     title,
-			EupDate:  eubDate,
-			FattyLiverAuthors:   authors,
-			FattyLiverAbstracts: abstracts,
+		article := &Pubmed.PubmedArticle{
+			Type:            articleType,
+			Href:            href,
+			Title:           title,
+			EupDate:         eubDate,
+			PubmedAuthors:   authors,
+			PubmedAbstracts: abstracts,
 		}
 
 		fmt.Println(article)
-		r := repository.FattyLiverArticleRepository{DB: global.DB}
+		r := repository.PubmedArticleRepository{DB: global.DB}
 		err := r.Create(article)
 		if err != nil {
 			fmt.Println("create article failed!")
@@ -95,6 +97,6 @@ func SpiderArticle(collector *colly.Collector, href string) {
 
 	err = collector.Visit(url)
 	if err != nil {
-		log.Fatal("Visit error:",err)
+		log.Fatal("Visit error:", err)
 	}
 }

@@ -3,10 +3,11 @@ package initiallize
 import (
 	"colly-spider/api"
 	"colly-spider/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRouter()  {
+func RegisterRouter() {
 	r := gin.Default()
 
 	r.Use(middleware.Cors2())
@@ -14,7 +15,7 @@ func RegisterRouter()  {
 	v1 := r.Group("/api")
 
 	{
-		v1.GET("/pubmed/fatty-liver", api.GetFattyLiverList)
+		v1.GET("/pubmed/fatty-liver", api.GetPubmedList)
 		v1.GET("/pubmed/fibrosis", api.GetFibrosisList)
 	}
 

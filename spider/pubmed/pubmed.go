@@ -2,19 +2,19 @@ package pubmed
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/extensions"
-	"log"
 )
 
 const (
 	DOMAIN   = "https://pubmed.ncbi.nlm.nih.gov"
-	StartUrl = DOMAIN + "/?term=Ultrasound+in+fatty+liver+with+chronic+hepatitis+B&filter=datesearch.y_5"
+	StartUrl = DOMAIN + "/?term=Chronic+hepatitis+B+with+nonalcoholic+fatty+liver+disease"
 )
 
 var page = 1
-
 
 func SpiderPubmed() {
 
@@ -29,7 +29,6 @@ func SpiderPubmed() {
 
 	extensions.RandomUserAgent(c)
 	extensions.Referer(c)
-
 
 	c.OnHTML(".search-results", func(e *colly.HTMLElement) {
 		//e.ForEach(".docsum-content", func(i int, item *colly.HTMLElement) {
@@ -54,7 +53,6 @@ func SpiderPubmed() {
 
 		})
 	})
-
 
 	// Before making a request print "Visiting ..."
 	c.OnRequest(func(r *colly.Request) {

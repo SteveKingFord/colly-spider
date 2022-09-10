@@ -4,16 +4,15 @@ import (
 	"colly-spider/global"
 	"colly-spider/initiallize"
 	"colly-spider/model/common"
-	"colly-spider/spider/cnki"
+	"colly-spider/spider/pubmed"
 	"log"
 )
 
-
 type Book struct {
-	Id int `json:"id"`
-	Title string `json:"title"`
+	Id      int    `json:"id"`
+	Title   string `json:"title"`
 	Summary string `json:"summary"`
-	Author string `json:"author"`
+	Author  string `json:"author"`
 }
 
 func main() {
@@ -24,8 +23,7 @@ func main() {
 			log.Fatal("database init err:", err)
 		}
 		//pubmed.SpiderPubmed()
-		cnki.SpiderCnki()
+		pubmed.SpiderPubmed()
 		//initiallize.RegisterRouter()
 	}
 }
-

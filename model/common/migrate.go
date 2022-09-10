@@ -1,14 +1,15 @@
 package common
 
 import (
-	"colly-spider/model/FattyLiver"
+	"colly-spider/model/pubmed"
+
 	"gorm.io/gorm"
 )
 
 func InitMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(
-		&FattyLiver.FattyLiverArticle{},
-		&FattyLiver.FattyLiverAuthor{},
-		&FattyLiver.FattyLiverAbstract{},
+		&pubmed.PubmedArticle{},
+		&pubmed.PubmedAuthor{},
+		&pubmed.PubmedAbstract{},
 	)
 }
