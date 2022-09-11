@@ -2,6 +2,6 @@ version: '3'
 services:
   server:
     container_name: colly-spider
-    image: colly-spider:0.1
+    image: registry.cn-hangzhou.aliyuncs.com/kingford/colly-spider:0.1
     ports:
       - "8080:80"
