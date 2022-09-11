@@ -4,13 +4,7 @@ this is a colly spider demo
 
 ## docker
 
-1. 交叉编译（mac）
-
-```bash
-sudo env GOOS=linux GOARCH=386 go build main.go
-```
-
-2. 编译镜像
+1. 编译镜像
 
 ```bash
 # 版本号
@@ -23,8 +17,8 @@ docker build -t colly-spider .
 docker logs -f -t --tail 10 docker_id
 ```
 
-3. 启动 compose
+2. 启动 compose
 
 ```bash
-docker-compose -f docker-compose.yml up -d colly
+docker-compose -f docker-compose.yml up -d server
 ```

@@ -2,8 +2,6 @@ version: '3'
 services:
   server:
     container_name: colly-spider
-    image: colly-spider:0.1
+    image: colly-spider:0.2
     ports:
       - "8080:80"
-    volumes:
-      - ./volumes/go/colly-spider:/go/colly-spider/app:rw

@@ -2,9 +2,13 @@ package initiallize
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 //数据库配置
@@ -17,18 +21,29 @@ const (
 )
 
 func InitialGORM() *gorm.DB {
-	// dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
 
-	// dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", userName, password, ip, port, dbName)
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer（日志输出的目标，前缀和日志包含的内容——译者注）
+		logger.Config{
+			SlowThreshold:             time.Second,   // 慢 SQL 阈值
+			LogLevel:                  logger.Silent, // 日志级别
+			IgnoreRecordNotFoundError: true,          // 忽略ErrRecordNotFound（记录未找到）错误
+			Colorful:                  false,         // 禁用彩色打印
+		},
+	)
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai", ip, userName, password, dbName, port)
 
-	fmt.Println("dsn:", dsn)
+	log.Printf("gorm link dsn: %s", dsn)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: newLogger,
+	})
 
 	if err != nil {
-		fmt.Println("MySQL启动异常:", err.Error())
+
+		log.Printf("postgres启动异常:%s", err.Error())
+
 		return nil
 	}
 

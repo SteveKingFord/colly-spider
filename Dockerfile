@@ -23,5 +23,8 @@ FROM scratch
 # 从builder镜像中把/dist/app 拷贝到当前目录
 COPY --from=builder /go/colly-spider/app /
 
+# 运行在80端口
+EXPOSE 80
+
 # 需要运行的命令
 ENTRYPOINT ["/app"]

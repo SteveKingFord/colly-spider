@@ -20,5 +20,5 @@ func RegisterRouter() {
 		v1.GET("/pubmed/articles", api.GetPubmedList)
 	}
 
-	log.Fatal(r.Run("0.0.0.0:8080"))
+	log.Fatal(r.Run("0.0.0.0:80"))
 }
