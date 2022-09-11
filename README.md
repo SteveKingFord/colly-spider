@@ -13,9 +13,11 @@ sudo env GOOS=linux GOARCH=386 go build main.go
 2. 编译镜像
 
 ```bash
-docker build -t github.com/skingford/colly-spider:0.1 .
+# 版本号
+docker build -t colly-spider:0.1 .
 
-docker build -t github.com/skingford/colly-spider .
+# 默认版本号
+docker build -t colly-spider .
 ```
 
 3. 启动 compose
