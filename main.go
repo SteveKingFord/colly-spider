@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/skingford/colly-spider/global"
-	"github.com/skingford/colly-spider/initiallize"
+	"github.com/skingford/colly-spider/initialize"
 	"github.com/skingford/colly-spider/model/common"
 )
 
@@ -16,7 +16,7 @@ type Book struct {
 }
 
 func main() {
-	global.DB = initiallize.InitialGORM()
+	global.DB = initialize.InitialGORM()
 	if global.DB != nil {
 		err := common.InitMigrate(global.DB)
 		if err != nil {
@@ -24,6 +24,6 @@ func main() {
 		}
 		//pubmed.SpiderPubmed()
 		// pubmed.SpiderPubmed()
-		initiallize.RegisterRouter()
+		initialize.RunApp()
 	}
 }

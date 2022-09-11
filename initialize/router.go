@@ -1,4 +1,4 @@
-package initiallize
+package initialize
 
 import (
 	"log"
@@ -9,7 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRouter() {
+func RunApp() {
+	// 设置 release模式
+	// gin.SetMode(gin.ReleaseMode)
+
+	// 或者 设置debug模式
+	gin.SetMode(gin.DebugMode)
+
 	r := gin.Default()
 
 	r.Use(middleware.Cors2())
