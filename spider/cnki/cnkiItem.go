@@ -1,16 +1,17 @@
 package cnki
 
 import (
-	"colly-spider/global"
-	"colly-spider/model/Fibrosis"
-	"colly-spider/repository"
-	"colly-spider/utils"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/gocolly/colly"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/gocolly/colly"
+	"github.com/skingford/colly-spider/global"
+	"github.com/skingford/colly-spider/model/Fibrosis"
+	"github.com/skingford/colly-spider/repository"
+	"github.com/skingford/colly-spider/utils"
 )
 
 func SpiderCnkiItem(collector *colly.Collector, href string) {
@@ -25,7 +26,7 @@ func SpiderCnkiItem(collector *colly.Collector, href string) {
 	})
 
 	if err != nil {
-		log.Fatal("limit error:",err)
+		log.Fatal("limit error:", err)
 	}
 
 	collector.OnRequest(func(request *colly.Request) {
@@ -39,27 +40,26 @@ func SpiderCnkiItem(collector *colly.Collector, href string) {
 	// 解析详情页数据
 	collector.OnHTML(".article-details", func(e *colly.HTMLElement) {
 		var (
-			authors []Fibrosis.FibrosisAuthor
+			authors   []Fibrosis.FibrosisAuthor
 			abstracts []Fibrosis.FibrosisAbstract
 		)
 
-		eubDate :=  e.ChildText(".full-view .secondary-date")
+		eubDate := e.ChildText(".full-view .secondary-date")
 
 		if eubDate == "" {
 			cit := e.ChildText(".full-view .cit")
-			cits := strings.Split(cit,";")
+			cits := strings.Split(cit, ";")
 			eubDate = cits[0]
 		}
 
-
 		title := e.ChildText(".full-view h1.heading-title")
 
-		e.DOM.Find(".full-view .authors .authors-list .authors-list-item").Each(func(i int, item *goquery.Selection){
+		e.DOM.Find(".full-view .authors .authors-list .authors-list-item").Each(func(i int, item *goquery.Selection) {
 			author := item.Find("a.full-name").Text()
 			authors = append(authors, Fibrosis.FibrosisAuthor{Name: author})
 		})
 
-		fmt.Println("authors:",authors)
+		fmt.Println("authors:", authors)
 
 		e.DOM.Find(".abstract-content p").Each(func(i int, item *goquery.Selection) {
 
@@ -76,10 +76,10 @@ func SpiderCnkiItem(collector *colly.Collector, href string) {
 		})
 
 		article := &Fibrosis.FibrosisArticle{
-			Type:      "超声-慢乙肝、肝纤维化 ",
-			Href:      href,
-			Title:     title,
-			EupDate:  eubDate,
+			Type:              "超声-慢乙肝、肝纤维化 ",
+			Href:              href,
+			Title:             title,
+			EupDate:           eubDate,
 			FibrosisAuthors:   authors,
 			FibrosisAbstracts: abstracts,
 		}
@@ -94,6 +94,6 @@ func SpiderCnkiItem(collector *colly.Collector, href string) {
 
 	err = collector.Visit(url)
 	if err != nil {
-		log.Fatal("Visit error:",err)
+		log.Fatal("Visit error:", err)
 	}
 }

@@ -1,7 +1,7 @@
 package common
 
 import (
-	"colly-spider/model/pubmed"
+	"github.com/skingford/colly-spider/model/pubmed"
 
 	"gorm.io/gorm"
 )

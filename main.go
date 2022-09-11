@@ -1,10 +1,11 @@
 package main
 
 import (
-	"colly-spider/global"
-	"colly-spider/initiallize"
-	"colly-spider/model/common"
 	"log"
+
+	"github.com/skingford/colly-spider/global"
+	"github.com/skingford/colly-spider/initiallize"
+	"github.com/skingford/colly-spider/model/common"
 )
 
 type Book struct {

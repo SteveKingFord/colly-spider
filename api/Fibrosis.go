@@ -1,39 +1,38 @@
 package api
 
 import (
-	"colly-spider/global"
-	"colly-spider/model/Fibrosis"
-	"colly-spider/repository"
 	"fmt"
-	"github.com/gin-gonic/gin"
-)
 
+	"github.com/gin-gonic/gin"
+	"github.com/skingford/colly-spider/global"
+	"github.com/skingford/colly-spider/model/Fibrosis"
+	"github.com/skingford/colly-spider/repository"
+)
 
 type FibrosisQuery struct {
 	PageIndex int `json:"pageIndex" form:"pageIndex"`
-	PageSize int `json:"pageSize" form:"pageSize"`
+	PageSize  int `json:"pageSize" form:"pageSize"`
 }
 
-func (q *FibrosisQuery) GetList()([]Fibrosis.FibrosisArticle, error){
-	r:=repository.FibrosisArticleRepository{
+func (q *FibrosisQuery) GetList() ([]Fibrosis.FibrosisArticle, error) {
+	r := repository.FibrosisArticleRepository{
 		DB: global.DB,
 	}
-	return r.GetList(q.PageIndex,q.PageSize)
+	return r.GetList(q.PageIndex, q.PageSize)
 }
 
-func (q *FibrosisQuery) GetTotal()(*int64,error){
-	r:=repository.FibrosisArticleRepository{
+func (q *FibrosisQuery) GetTotal() (*int64, error) {
+	r := repository.FibrosisArticleRepository{
 		DB: global.DB,
 	}
 	return r.Total()
 }
 
-
-func GetFibrosisList(c *gin.Context)  {
+func GetFibrosisList(c *gin.Context) {
 	q := FibrosisQuery{}
-	if err :=c.ShouldBind(&q);err ==nil {
-		value ,err := q.GetList()
-		total,_:=q.GetTotal()
+	if err := c.ShouldBind(&q); err == nil {
+		value, err := q.GetList()
+		total, _ := q.GetTotal()
 
 		if err != nil {
 			_ = fmt.Errorf("failed a something %s", err)
@@ -42,15 +41,14 @@ func GetFibrosisList(c *gin.Context)  {
 			})
 			return
 		}
-		c.JSON(200,gin.H{
-			"data":value,
-			"total":total,
+		c.JSON(200, gin.H{
+			"data":  value,
+			"total": total,
 		})
-	}else {
+	} else {
 		c.JSON(200, gin.H{
 			"error": err.Error(),
 		})
 	}
-
 
 }

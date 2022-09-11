@@ -1,14 +1,15 @@
 package pubmed
 
 import (
-	"colly-spider/global"
-	Pubmed "colly-spider/model/pubmed"
-	"colly-spider/repository"
-	"colly-spider/utils"
 	"fmt"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/skingford/colly-spider/global"
+	Pubmed "github.com/skingford/colly-spider/model/pubmed"
+	"github.com/skingford/colly-spider/repository"
+	"github.com/skingford/colly-spider/utils"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"

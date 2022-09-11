@@ -1,10 +1,11 @@
 package api
 
 import (
-	"colly-spider/global"
-	"colly-spider/model/pubmed"
-	"colly-spider/repository"
 	"fmt"
+
+	"github.com/skingford/colly-spider/global"
+	"github.com/skingford/colly-spider/model/pubmed"
+	"github.com/skingford/colly-spider/repository"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"colly-spider/model/pubmed"
 	"fmt"
+
+	"github.com/skingford/colly-spider/model/pubmed"
 
 	"gorm.io/gorm"
 )

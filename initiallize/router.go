@@ -1,9 +1,10 @@
 package initiallize
 
 import (
-	"colly-spider/api"
-	"colly-spider/middleware"
 	"log"
+
+	"github.com/skingford/colly-spider/api"
+	"github.com/skingford/colly-spider/middleware"
 
 	"github.com/gin-gonic/gin"
 )
