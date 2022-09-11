@@ -18,6 +18,9 @@ docker build -t colly-spider:0.1 .
 
 # 默认版本号
 docker build -t colly-spider .
+
+# 查看日志
+docker logs -f -t --tail 10 docker_id
 ```
 
 3. 启动 compose
