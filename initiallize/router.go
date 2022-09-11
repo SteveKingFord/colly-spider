@@ -3,6 +3,7 @@ package initiallize
 import (
 	"colly-spider/api"
 	"colly-spider/middleware"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,13 +13,11 @@ func RegisterRouter() {
 
 	r.Use(middleware.Cors2())
 
-	v1 := r.Group("/api")
+	v1 := r.Group("/v1")
 
 	{
-		v1.GET("/pubmed/fatty-liver", api.GetPubmedList)
-		v1.GET("/pubmed/fibrosis", api.GetFibrosisList)
+		v1.GET("/pubmed/articles", api.GetPubmedList)
 	}
 
-	_ = r.Run(":8080")
-
+	log.Fatal(r.Run("0.0.0.0:8080"))
 }

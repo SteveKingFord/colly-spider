@@ -14,12 +14,12 @@ import (
 
 const (
 	DOMAIN   = "https://pubmed.ncbi.nlm.nih.gov"
-	StartUrl = DOMAIN + "/?term=Chronic+hepatitis+B+with+nonalcoholic+fatty+liver+disease"
+	StartUrl = DOMAIN + "/?term=Liver+fibrosis"
 )
 
-var page = 1
+var page = 653
 
-const maxPage = 45
+const maxPage = 1000
 
 func SpiderPubmed() {
 
@@ -73,7 +73,7 @@ func SpiderPubmed() {
 
 	c.OnScraped(func(r *colly.Response) {
 		page = page + 1
-		if page*10 <= maxPage {
+		if page <= maxPage {
 			nextPage := fmt.Sprintf("%s&page=%d", StartUrl, page)
 			fmt.Println("next page is", nextPage)
 			err := c.Visit(nextPage)

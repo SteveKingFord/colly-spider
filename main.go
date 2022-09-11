@@ -4,7 +4,6 @@ import (
 	"colly-spider/global"
 	"colly-spider/initiallize"
 	"colly-spider/model/common"
-	"colly-spider/spider/pubmed"
 	"log"
 )
 
@@ -23,7 +22,7 @@ func main() {
 			log.Fatal("database init err:", err)
 		}
 		//pubmed.SpiderPubmed()
-		pubmed.SpiderPubmed()
-		//initiallize.RegisterRouter()
+		// pubmed.SpiderPubmed()
+		initiallize.RegisterRouter()
 	}
 }
